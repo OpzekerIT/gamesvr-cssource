@@ -33,12 +33,16 @@ LABEL com.lacledeslan.build-node=$BUILDNODE `
       org.label-schema.description="Counter-Strike Source Dedicated Server" `
       org.label-schema.vcs-url="https://github.com/LacledesLAN/gamesvr-cssource"
 
-# Set up Enviornment
+# Set up Environment
 RUN useradd --home /app --gid root --system CSSource &&`
     mkdir --parents /app &&`
     chown CSSource:root -R /app;
 
+# Copy the Counter-Strike: Source server files
 COPY --chown=CSSource:root --from=cssource-builder /output /app
+
+# Copy all maps from the local ./maps directory into the container
+COPY --chown=CSSource:root ./maps /app/cstrike/maps/
 
 RUN chmod +x /app/ll-tests/*.sh &&`
     echo $'\n\nLinking steamclient.so to prevent srcds_run errors' &&`
